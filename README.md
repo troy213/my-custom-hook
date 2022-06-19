@@ -1,70 +1,178 @@
-# Getting Started with Create React App
+# My React Custom Hook
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+List of my useful custom hook that I get across the Internet
 
-## Available Scripts
+### useLocalstorage
 
-In the project directory, you can run:
+Create a state that can be persisted to localstorage
 
-### `npm start`
+```
+const [state, setState] = useLocalstorate('key', defaultValue)
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```javascript
+  import useLocalstorage from './hooks/useLocalstorage';
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  export default const App = () => {
+   const [value, setValue] = useLocalstorage('name', '');
 
-### `npm test`
+   return <h1>{value}</h1>
+  }
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### useUpdateLogger
 
-### `npm run build`
+Similar to console.log();
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+useUpdateLogger(state)
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```javascript
+  import useLocalstorage from './hooks/useLocalstorage';
+  import useUpdateLogger from './hooks/useUpdateLogger';
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  export default const App = () => {
+   const [value, setValue] = useLocalstorage(key, defaultValue);
+   useUpdateLogger(value);
 
-### `npm run eject`
+   return <h1>{value}</h1>
+  }
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### useTimeout
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Invoke a callback after n milisecond(s)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+const { reset, clear } = useTimeout(callback, delay)
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```javascript
+  import { useState } from 'react';
+  import useTimeout from './hooks/useTimeout';
 
-## Learn More
+  export default const App = () => {
+   const [value, setValue] = useState(10);
+   const { reset, clear } = useTimeout(() => setValue(0), 1000)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   return (
+    <>
+     <h1>{value}</h1>
+     <button onClick={reset}>Reset</button>
+     <button onClick={clear}>Clear</button>
+    </>
+   )
+  }
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### useDebounce
 
-### Code Splitting
+Invoke a callback if there is no changes after n milisecond(s)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+useDebounce(callback, delay, [dependencies])
+```
 
-### Analyzing the Bundle Size
+```javascript
+  import { useState } from 'react';
+  import useDebounce from './hooks/useDebounce';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+  export default const App = () => {
+   const [value, setValue] = useState(10);
+   useDebounce(() => alert(value), 1000, [value]);
 
-### Making a Progressive Web App
+   return (
+    <>
+     <h1>{value}</h1>
+     <button onClick={() => setValue((c) => c + 1)}>Increment</button>
+    </>
+   )
+  }
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### useToggle
 
-### Advanced Configuration
+Create a function to toggle boolean value
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```
+useToggle(defaultValue)
+```
 
-### Deployment
+```javascript
+  import useToggle from './hooks/useToggle';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+  export default const App = () => {
+   const [toggleValue, setToggleValue] = useToggle(false);
 
-### `npm run build` fails to minify
+   return (
+    <>
+     <h1>{toggleValue.toString()}</h1>
+     <button onClick={setToggleValue}>Toggle</button>
+     <button onClick={() => setToggleValue(true)}>Make True</button>
+     <button onClick={() => setToggleValue(false)}>Make False</button>
+    </>
+   )
+  }
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### useUpdateEffect
+
+Create a useEffect hook that will not running in first render
+
+```
+useUpdateEffect(callback, [dependencies])
+```
+
+```javascript
+  import { useState } from 'react';
+  import useUpdateEffect from './hooks/useUpdateEffect';
+
+  export default const App = () => {
+   const [value, setValue] = useState(10);
+   useUpdateEffect(() => alert(value), [value]);
+
+   return (
+    <>
+     <h1>{value}</h1>
+     <button onClick={() => setValue((c) => c + 1)}>Increment</button>
+    </>
+   )
+  }
+```
+
+### useArray
+
+Create array manipulation function that can add, filter, push, remove, clear, and set.
+
+```
+const { array, set, push, remove, filter, update, clearArr } = useArray(array)
+```
+
+```javascript
+  import useArray from './hooks/useArray';
+
+  export default const App = () => {
+   const { array, set, push, remove, filter, update, clearArr } = useArray([
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+  ])
+
+   return (
+    <>
+     <p>value: {array.join(', ')}</p>
+     <p>set to 1, 2, 3, 4, 5</p>
+     <button onClick={() => set([1, 2, 3, 4, 5])}>Set</button>
+     <p>push 1</p>
+     <button onClick={() => push(1)}>Push</button>
+     <p>remove latest index</p>
+     <button onClick={() => remove(array.length - 1)}>Remove</button>
+     <p>filter less than 4</p>
+     <button onClick={() => filter((n) => n < 4)}>Filter</button>
+     <p>update index 1 to 3</p>
+     <button onClick={() => update(1, 3)}>Update</button>
+     <p>clear array</p>
+     <button onClick={() => clearArr()}>Clear</button>
+    </>
+   )
+  }
+```
