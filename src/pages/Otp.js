@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
+import Pulldown from './Pulldown'
 
 const Otp = () => {
   const TIME_SECOND = 10
@@ -42,6 +43,7 @@ const Otp = () => {
 
   return (
     <>
+      <Pulldown />
       <Link to='/'>Home</Link>
       {timeLeft < 1 ? (
         <>
